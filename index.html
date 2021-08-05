@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Speech recognize</title>
+</head>
+
+<body>
+    <div class="app">
+        <div class="header">
+            <h2>Nhận diện giọng nói Tiếng Việt</h2>
+        </div>
+        <div class="content">
+            <div class="main">
+
+            </div>
+            <div class="container">
+                <button class="start">
+                    Bắt đầu
+                </button>
+                <button class="end">
+                    Kết thúc
+                </button>
+                <button class="remove">
+                    Xóa
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
+        var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
+        var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+
+        var recognition = new SpeechRecognition();
+        // recognition.continuous = true;
+        recognition.lang = 'vi-VN';
+        recognition.interimResults = true;
+
+        var btn_start = document.querySelector('.start');
+        var btn_end = document.querySelector('.end');
+        var btn_remove = document.querySelector('.remove');
+        var main = document.querySelector('.main');
+
+        btn_start.onclick = () => {
+            recognition.start();
+            recognition.addEventListener('end', startRecord)
+        }
+
+        function startRecord() {
+            recognition.start();
+
+        }
+        btn_end.onclick = () => {
+            recognition.removeEventListener('end', startRecord)
+            recognition.stop();
+        }
+        var p = document.createElement('p');
+        recognition.onresult = (e) => {
+            var context = Array.from(e.results)
+                .map(result => result[0])
+                .map(result => result.transcript)
+                .join('')
+            p.innerHTML = context;
+            main.appendChild(p);
+            if (e.results[0].isFinal) {
+                p = document.createElement('p');
+                if (context.includes('YouTube')) {
+                    window.open("https://www.youtube.com");
+                }
+            }
+        }
+        btn_remove.onclick = () => {
+            main.removeChild(main.childNodes[0]);
+        }
+
+    </script>
+</body>
+
+</html>
